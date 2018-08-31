@@ -131,7 +131,9 @@ function encode_query_params(query_params) {
         count++;
     }
 
-    encoded_query = encodeURI(build_query).replace(/'/g, "%27");
+    encoded_query = encodeURI(build_query);
+    encoded_query = encoded_query.replace(/'/g, "%27");
+    encoded_query = encoded_query.replace(/\$/g, "%24");
 
     return encoded_query;
 }
