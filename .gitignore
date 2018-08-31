@@ -1,0 +1,8 @@
+# Dist Folder
+node_modules/
+
+# Keys Folder
+keys/
+
+# Test File
+test.js
