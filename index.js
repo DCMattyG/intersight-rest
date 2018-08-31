@@ -1,6 +1,6 @@
 /**
- * Intersight REST Module
- * @module IntersightREST
+ * Intersight REST API Module
+ * @module intersight-rest
  */
 
 const request = require('request-promise');
@@ -111,12 +111,29 @@ function prepare_str_to_sign(req_tgt, hdrs) {
 }
 
 /**
- * Generates a query string based on oData 2.0
+ * Encodes query string properly to work in Intersight API calls.
+ * @function encode_intersight_uri
+ * @private
+ * @param  {String} raw_uri  Query string formatted URI.
+ * @return {String}          Intersight encoded URI query string.
+ */
+function encode_intersight_uri(raw_uri) {
+    var encoded_uri;
+
+    encoded_uri = encodeURI(raw_uri);
+    encoded_uri = encoded_uri.replace(/'/g, "%27");
+    encoded_uri = encoded_uri.replace(/\$/g, "%24");
+
+    return encoded_uri;
+}
+
+/**
+ * Generates a query string based on oData 2.0.
  * https://www.odata.org/documentation/odata-version-2-0/uri-conventions/
  * @function encode_query_params
  * @private
  * @param  {Object} query_params  Query string key/value pairs.
- * @return {String}               URI encoded query string.
+ * @return {String}               URI formatted query string.
  */
 function encode_query_params(query_params) {
     var build_query = "?";
@@ -131,9 +148,7 @@ function encode_query_params(query_params) {
         count++;
     }
 
-    encoded_query = encodeURI(build_query);
-    encoded_query = encoded_query.replace(/'/g, "%27");
-    encoded_query = encoded_query.replace(/\$/g, "%24");
+    var encoded_query = encode_intersight_uri(build_query);
 
     return encoded_query;
 }
@@ -262,7 +277,7 @@ const intersightREST = function intersight_call(resource_path, query_params={}, 
         headers: request_header
     };
 
-    // Make HTTP request & return a Promise
+    // Make HTTP request & return a Javascript Promise
     return make_request(request_options);
 }
 
