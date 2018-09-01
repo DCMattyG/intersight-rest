@@ -145,13 +145,18 @@ function make_request(request_data) {
  * @param  {String} moid           Intersight object MOID.
  * @return {Promise}               Javascript Promise for HTTP response body.
  */
-const intersightREST = function intersight_call(resource_path, query_params={}, body={}, moid=null) {
+const intersightREST = function intersight_call({resource_path="", query_params={}, body={}, moid=null} = {}) {
     var target_host = host.hostname;
     var target_path = host.pathname;
     var query_path = "";
     var method;
 
-    // Verify the body isn't empy & is a valid Javascript Object
+    // Verify the resource path isn't empy & is a valid String
+    if(resource_path != "" && resource_path.constructor != String) {
+        return Promise.reject('The *resource_path* value is required and must be of type "String"');
+    }
+
+    // Verify the query parameters isn't empy & is a valid Javascript Object
     if(query_params != {} && query_params.constructor != Object) {
         return Promise.reject('The *query_params* value must be of type "Object"');
     }

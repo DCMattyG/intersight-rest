@@ -5,25 +5,32 @@ Cisco has released their new Intersight platform for managing UCS Server and Hyp
 
 The intersightREST call structure looks like:
 ```js
-intersightREST(<resourcePath>, <queryParams>, <body>, <moid>);
+intersightREST(<options>);
 ```
 
+| Option | Format | Value |
+| ------ | ------ | ------ |
+| resource_path | &lt;String&gt; | Resource Path from https://intersight.com/apidocs |
+| query_params | &lt;Object&gt; | Query Parameters from Resource Path GET |
+| body | &lt;Object&gt; | Body Parameters from Resource Path POST|
+| moid | &lt;String&gt; | MOID of Object to be Modified |
+
 The HTTP verbs will be assumed as follows:
-- GET: &lt;resourcePath&gt; / &lt;resourcePath&gt; + &lt;queryParams&gt;
-- POST: &lt;resourcePath&gt; + &lt;body&gt;
-- PATCH: &lt;resourcePath&gt; + &lt;body&gt; + &lt;moid&gt;
+- GET: &lt;resource_path&gt; / &lt;resource_path&gt; + &lt;query_params&gt;
+- POST: &lt;resource_path&gt; + &lt;body&gt;
+- PATCH: &lt;resource_path&gt; + &lt;body&gt; + &lt;moid&gt;
 
 More information about Intersight is available at: https://www.intersight.com
 <br>
 Details on the RESTful API and documentation: https://www.intersight.com/apidocs
 <br>
-### NPM Installation
+### NPM Installation:
 
 ```sh
 $ npm install --save intersight-rest
 ```
 
-### Usage
+### Usage:
 
 ```js
 // Import "intersight-rest" Package
@@ -38,7 +45,13 @@ isREST.setPrivateKey(fs.readFileSync('./keys/private_key.pem', 'utf8'));
 const resourcePath = '/ntp/Policies';
 
 // GET EXAMPLE
-isREST.intersightREST(resourcePath, queryParams, {}, null).then(body => {
+/* Set GET Options */
+options = {
+    resource_path: resourcePath,
+    query_params: queryParams
+};
+
+isREST.intersightREST(options).then(body => {
     console.log(body);
 }).catch(err => {
     console.log('Error: ', err);
@@ -75,7 +88,13 @@ postBody = {
     NtpServers: ["8.8.8.8"]
 };
 
-isREST.intersightREST(resourcePath, {}, postBody, null).then(body => {
+/* Set POST Options */
+options = {
+    resource_path: resourcePath,
+    body: postBody
+};
+
+isREST.intersightREST(options).then(body => {
     console.log(body);
 }).catch(err => {
     console.log('Error: ', err);
@@ -92,7 +111,14 @@ patchBody = {
     NtpServers: ["10.10.10.10"]
 };
 
-isREST.intersightREST(resourcePath, {}, patchBody, patchMoid).then(body => {
+/* Set PATCH Options */
+options = {
+    resource_path: resourcePath,
+    body: patchBody,
+    moid: patchMoid
+};
+
+isREST.intersightREST(options).then(body => {
     console.log(body);
 }).catch(err => {
     console.log('Error: ', err);
