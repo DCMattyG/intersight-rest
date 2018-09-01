@@ -10,18 +10,18 @@ $ npm install --save intersight-rest
 
 ```js
 // Import "intersight-rest" Package
-const isRest = require('intersight-rest');
+const isREST = require('intersight-rest');
 
 // Load Public/Private Keys
 const fs = require('fs');
-isRest.setPublicKey(fs.readFileSync('./keys/public_key.txt', 'utf8'));
-isRest.setPrivateKey(fs.readFileSync('./keys/private_key.pem', 'utf8'));
+isREST.setPublicKey(fs.readFileSync('./keys/public_key.txt', 'utf8'));
+isREST.setPrivateKey(fs.readFileSync('./keys/private_key.pem', 'utf8'));
 
 // Select Resource Path from https://www.intersight.com/apidocs
 const resourcePath = '/ntp/Policies';
 
 // GET EXAMPLE
-isRest.intersightREST(resourcePath, queryParams, {}, null).then(body => {
+isREST.intersightREST(resourcePath, queryParams, {}, null).then(body => {
     console.log(body);
 }).catch(err => {
     console.log('Error: ', err);
@@ -58,7 +58,7 @@ postBody = {
     NtpServers: ["8.8.8.8"]
 };
 
-cisco.intersightREST(resourcePath, {}, postBody, null).then(body => {
+isREST.intersightREST(resourcePath, {}, postBody, null).then(body => {
     console.log(body);
 }).catch(err => {
     console.log('Error: ', err);
@@ -75,7 +75,7 @@ patchBody = {
     NtpServers: ["10.10.10.10"]
 };
 
-cisco.intersightREST(resourcePath, {}, patchBody, patchMoid).then(body => {
+isREST.intersightREST(resourcePath, {}, patchBody, patchMoid).then(body => {
     console.log(body);
 }).catch(err => {
     console.log('Error: ', err);
