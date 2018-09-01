@@ -18,7 +18,8 @@ intersightREST(<options>);
 &nbsp;  
 
 The HTTP verbs will be assumed as follows:
- - GET: &lt;resource_path&gt; / &lt;resource_path&gt; + &lt;query_params&gt;
+ - GET: &lt;resource_path&gt;
+ - GET: &lt;resource_path&gt; + &lt;query_params&gt;
  - POST: &lt;resource_path&gt; + &lt;body&gt;
  - PATCH: &lt;resource_path&gt; + &lt;body&gt; + &lt;moid&gt;
 
