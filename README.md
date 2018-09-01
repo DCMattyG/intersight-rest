@@ -1,12 +1,29 @@
 # Installation
 
-### Using NPM:
+### Introduction
+Cisco has released their new Intersight platform for managing UCS Server and Hyperflex Hyperconverged infrastructure from a SaaS based interface. With high security standards, forming and signing the RESTful API calls to Intersight can be a challenge, so I wrote this package to do all of that work for you. All you need to provide is your Public/Private keys generated from the Intersight interface, as well at the API endpoint you'd like to target. Optionally you can add in query parameters for GET requests, and a body for POST/PATCH opterations.
+
+The intersightREST call structure looks like:
+```js
+intersightREST(<resourcePath>, <queryParams>, <body>, <moid>);
+```
+
+The HTTP verbs will be assumed as follows:
+- GET: &lt;resourcePath&gt; / &lt;resourcePath&gt; + &lt;queryParams&gt;
+- POST: &lt;resourcePath&gt; + &lt;body&gt;
+- PATCH: &lt;resourcePath&gt; + &lt;body&gt; + &lt;moid&gt;
+
+More information about Intersight is available at: https://www.intersight.com
+<br>
+Details on the RESTful API and documentation: https://www.intersight.com/apidocs
+<br>
+### NPM Installation
 
 ```sh
 $ npm install --save intersight-rest
 ```
 
-### Usage:
+### Usage
 
 ```js
 // Import "intersight-rest" Package
