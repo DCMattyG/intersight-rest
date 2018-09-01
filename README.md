@@ -13,7 +13,9 @@ intersightREST(<options>);
 | resource_path | &lt;String&gt; | Resource Path from https://intersight.com/apidocs |
 | query_params | &lt;Object&gt; | Query Parameters from Resource Path GET |
 | body | &lt;Object&gt; | Body Parameters from Resource Path POST|
-| moid | &lt;String&gt; | MOID of Object to be Modified |  
+| moid | &lt;String&gt; | MOID of Object to be Modified |
+
+&nbsp;  
 
 The HTTP verbs will be assumed as follows:
  - GET: &lt;resource_path&gt; / &lt;resource_path&gt; + &lt;query_params&gt;
