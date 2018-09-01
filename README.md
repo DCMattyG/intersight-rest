@@ -21,7 +21,7 @@ isRest.setPrivateKey(fs.readFileSync('./keys/private_key.pem', 'utf8'));
 const resourcePath = '/ntp/Policies';
 
 // GET EXAMPLE
-isRest.intersightREST(resourcePath, queryParams).then(body => {
+isRest.intersightREST(resourcePath, queryParams, {}, null).then(body => {
     console.log(body);
 }).catch(err => {
     console.log('Error: ', err);
@@ -58,7 +58,7 @@ postBody = {
     NtpServers: ["8.8.8.8"]
 };
 
-cisco.intersightREST(resourcePath, postBody).then(body => {
+cisco.intersightREST(resourcePath, {}, postBody, null).then(body => {
     console.log(body);
 }).catch(err => {
     console.log('Error: ', err);
@@ -75,7 +75,7 @@ patchBody = {
     NtpServers: ["10.10.10.10"]
 };
 
-cisco.intersightREST(resourcePath, patchBody, patchMoid).then(body => {
+cisco.intersightREST(resourcePath, {}, patchBody, patchMoid).then(body => {
     console.log(body);
 }).catch(err => {
     console.log('Error: ', err);
