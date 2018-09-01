@@ -70,7 +70,7 @@ cisco.intersightREST(resourcePath, postBody).then(body => {
 /* Set Object MOID to be Modified */
 patchMoid = '6b1727fa686c873463b8163e';
 
-/* Assemble POST Body */
+/* Assemble PATCH Body */
 patchBody = {
     NtpServers: ["10.10.10.10"]
 };
