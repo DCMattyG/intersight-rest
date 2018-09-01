@@ -4,5 +4,8 @@ node_modules/
 # Keys Folder
 keys/
 
+# Package Lock File
+package-lock.json
+
 # Test File
 test.js

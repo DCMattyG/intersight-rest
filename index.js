@@ -6,6 +6,7 @@
 const request = require('request-promise');
 const crypto = require('crypto');
 const url = require('url');
+const qs = require('qs');
 
 const host = url.parse('https://intersight.com/api/v1');
 const digest_algorithm = 'rsa-sha256';
@@ -111,49 +112,6 @@ function prepare_str_to_sign(req_tgt, hdrs) {
 }
 
 /**
- * Encodes query string properly to work in Intersight API calls.
- * @function encode_intersight_uri
- * @private
- * @param  {String} raw_uri  Query string formatted URI.
- * @return {String}          Intersight encoded URI query string.
- */
-function encode_intersight_uri(raw_uri) {
-    var encoded_uri;
-
-    encoded_uri = encodeURI(raw_uri);
-    encoded_uri = encoded_uri.replace(/'/g, "%27");
-    encoded_uri = encoded_uri.replace(/\$/g, "%24");
-
-    return encoded_uri;
-}
-
-/**
- * Generates a query string based on oData 2.0.
- * https://www.odata.org/documentation/odata-version-2-0/uri-conventions/
- * @function encode_query_params
- * @private
- * @param  {Object} query_params  Query string key/value pairs.
- * @return {String}               URI formatted query string.
- */
-function encode_query_params(query_params) {
-    var build_query = "?";
-    var length = Object.keys(query_params).length;
-    var count = 0;
-
-    for(key in query_params) {
-        build_query += key + "=" + query_params[key];
-        if(count < length-1) {
-            build_query += "&";
-        }
-        count++;
-    }
-
-    var encoded_query = encode_intersight_uri(build_query);
-
-    return encoded_query;
-}
-
-/**
  * Generated a GMT formatted Date.
  * @function get_gmt_date
  * @private
@@ -232,7 +190,7 @@ const intersightREST = function intersight_call(resource_path, query_params={}, 
         method = 'GET';
 
         if(query_params != {}) {
-            query_path = encode_query_params(query_params);
+            query_path = "?" + qs.stringify(query_params);
         }
     }
 
@@ -271,8 +229,6 @@ const intersightREST = function intersight_call(resource_path, query_params={}, 
         method: method,
         url: target_url,
         qs: query_params,
-        useQuerystring: true,
-        qsParseOptions: {sep:'&', eq:'=', options:{}},
         body: JSON.stringify(body),
         headers: request_header
     };
