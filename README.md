@@ -22,8 +22,8 @@ The HTTP verbs will be assumed as follows:
  - POST: &lt;resource_path&gt; + &lt;body&gt;
  - PATCH: &lt;resource_path&gt; + &lt;body&gt; + &lt;moid&gt;
 
-More information about Intersight is available at: https://www.intersight.com  
-Details on the RESTful API and documentation: https://www.intersight.com/apidocs  
+More information about Intersight is available at: https://intersight.com  
+Details on the RESTful API and documentation: https://intersight.com/apidocs  
 
 ### **NPM Installation:**
 
@@ -128,3 +128,5 @@ isREST.intersightREST(options).then(body => {
 ```
 
 ### See package source for more details...
+
+*Copyright (c) 2018 Cisco and/or its affiliates.

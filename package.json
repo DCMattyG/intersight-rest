@@ -19,7 +19,7 @@
     "name": "Matthew Garrett",
     "email": "mgarrett0402@gmail.com"
   },
-  "license": "MIT",
+  "license": "Cisco Sample Code License, Version 1.0",
   "dependencies": {
     "qs": "^6.5.2",
     "request": "^2.88.0",
