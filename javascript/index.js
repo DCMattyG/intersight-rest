@@ -65,11 +65,10 @@ function get_sha256_digest(data) {
  * Generates an RSA Signed SHA256 digest from a String.
  * @function get_rsasig_sha256_b64encode
  * @private
- * @param  {String} private_key  RSA private key.
  * @param  {String} data         String to be signed & hashed.
  * @return {string}              Base64 formatted string.
  */
-function get_rsasig_sha256_b64encode(private_key, data) {
+function get_rsasig_sha256_b64encode(data) {
     var key_data = {
         key: private_key,
         padding: crypto.constants.RSA_PKCS1_PADDING
@@ -82,12 +81,11 @@ function get_rsasig_sha256_b64encode(private_key, data) {
  * Assmebled an Intersight formatted authorization header.
  * @function get_auth_header
  * @private
- * @param  {String} public_key  RSA public key.
  * @param  {Object} hdrs        Object with header keys.
  * @param  {String} signed_msg  Base64 encoded SHA256 hashed body.
  * @return {string}             Concatenated authorization header.
  */
-function get_auth_header(public_key, hdrs, signed_msg) {
+function get_auth_header(hdrs, signed_msg) {
     var auth_str = "Signature";
 
     auth_str = auth_str + " " + "keyId=\"" + public_key + "\"," + "algorithm=\"" + digest_algorithm + "\"," + "headers=\"(request-target)";
@@ -154,9 +152,8 @@ function make_request(request_data) {
  * Invoke the Intersight API.
  * @function intersight_call
  * @public
- * @param  {String} public_key     RSA public key.
- * @param  {String} private_key    RSA private key.
  * @param  {String} resource_path  Intersight resource path e.g. '/ntp/Policies'.
+ * @param  {Object} query_params   Javascript object with query string parameters as key/value pairs.
  * @param  {Object} body           Javascript object with Intersight data.
  * @param  {String} moid           Intersight object MOID.
  * @return {Promise}               Javascript Promise for HTTP response body.
@@ -173,12 +170,12 @@ const intersightREST = function intersight_call({resource_path="", query_params=
     }
 
     // Verify the query parameters isn't empy & is a valid Javascript Object
-    if(query_params != {} && query_params.constructor != Object) {
+    if(Object.keys(query_params).length != 0 && query_params.constructor != Object) {
         return Promise.reject('The *query_params* value must be of type "Object"');
     }
 
     // Verify the body isn't empy & is a valid Javascript Object
-    if(body != {} && body.constructor != Object) {
+    if(Object.keys(body).length != 0 && body.constructor != Object) {
         return Promise.reject('The *body* value must be of type "Object"');
     }
 
@@ -210,7 +207,7 @@ const intersightREST = function intersight_call({resource_path="", query_params=
     else {
         method = 'GET';
 
-        if(query_params != {}) {
+        if(Object.keys(query_params).length != 0) {
             query_path = "?" + qs.stringify(query_params);
         }
     }
@@ -233,8 +230,8 @@ const intersightREST = function intersight_call({resource_path="", query_params=
     };
 
     var string_to_sign = prepare_str_to_sign(request_target, auth_header);
-    var b64_signed_msg = get_rsasig_sha256_b64encode(private_key, string_to_sign);
-    var header_auth = get_auth_header(public_key, auth_header, b64_signed_msg);
+    var b64_signed_msg = get_rsasig_sha256_b64encode(string_to_sign);
+    var header_auth = get_auth_header(auth_header, b64_signed_msg);
 
     // Generate the HTTP requests header
     var request_header = {
