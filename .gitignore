@@ -1,11 +1,15 @@
 # Dist Folder
 node_modules/
 
+# PyChache Folder
+__pycache__/
+
 # Keys Folder
 keys/
 
 # Package Lock File
 package-lock.json
 
-# Test File
+# Test Files
 test.js
+test.py
