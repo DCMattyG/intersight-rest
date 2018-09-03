@@ -1,6 +1,7 @@
 """
 Intersight REST API Module
 Author: Matthew Garrett
+Contributors: David Soper, Chris Gascoigne
 Email: mgarrett0402@gmail.com
 
 Copyright (c) 2018 Cisco and/or its affiliates.
