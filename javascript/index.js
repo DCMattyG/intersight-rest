@@ -33,7 +33,7 @@ var public_key = null;
 /**
  * Set RSA public key.
  * @function set_public_key
- * @private
+ * @public
  * @param  {String} data  RSA public key.
  */
 const setPublicKey = function set_public_key(pub_key) {
@@ -43,7 +43,7 @@ const setPublicKey = function set_public_key(pub_key) {
 /**
  * Set RSA private key.
  * @function set_private_key
- * @private
+ * @public
  * @param  {String} data  RSA private key.
  */
 const setPrivateKey = function set_private_key(prv_key) {
