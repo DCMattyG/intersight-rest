@@ -212,8 +212,6 @@ def intersight_call(resource_path="", query_params={}, body={}, moid=None):
     }
 
     string_to_sign = prepare_str_to_sign(request_target, auth_header)
-    print("STRING TO SIGN")
-    print(string_to_sign)
     auth_digest = get_sha256_digest(string_to_sign.encode())
     b64_signed_msg = get_rsasig_b64encode(auth_digest)
     auth_header = get_auth_header(auth_header, b64_signed_msg)
@@ -229,42 +227,10 @@ def intersight_call(resource_path="", query_params={}, body={}, moid=None):
 
     # Make HTTP request & return a Javascript Promise
     if(method == "GET"):
-        print("GET")
-        new_query_params = urlencode(query_params, quote_via=quote)
-        response = requests.get(target_url, headers=request_header, json=body, params=new_query_params)
+        response = requests.get(target_url, headers=request_header, json=body, params=urlencode(query_params, quote_via=quote))
     elif(method == "POST"):
-        print("POST")
-        response = requests.get(target_url, headers=request_header, json=body)
+        response = requests.post(target_url, headers=request_header, json=body)
     elif(method == "PATCH"):
-        print("PATCH")
-        response = requests.get(target_url, headers=request_header, json=body, params=moid)
-
-    print("Target URL: " + str(target_url))
-    print("Headers: " + str(request_header))
-    print("Body: " + str(body))
-    print("Params: " + str(query_params))
-    print("Moid: " + str(moid))
-    print("Request URL: " + str(response.url))
-    print(response.status_code)
-    print(response.text)
+        response = requests.patch(target_url, headers=request_header, json=body)
 
     return response.json()
-
-private_key_file = open("./keys/private_key.pem", "r") 
-set_private_key(private_key_file.read())
-
-public_key_file = open("./keys/public_key.txt", "r") 
-set_public_key(public_key_file.read())
-
-resourcePath = '/ntp/Policies'
-
-# queryParams = {
-#     "$top": 1
-# }
-
-queryParams = {
-    "$filter": "Name eq 'Test-NTP'"
-}
-
-data = intersight_call(resourcePath, queryParams)
-#print(data)
