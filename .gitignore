@@ -1,8 +1,17 @@
 # Dist Folder
 node_modules/
 
-# PyChache Folder
+# PyCache Folder
 __pycache__/
+
+# Python Build Folder
+build/
+
+# Python Dist Folder
+dist/
+
+# Pything Egg Folder
+*.egg-info/
 
 # Keys Folder
 keys/
