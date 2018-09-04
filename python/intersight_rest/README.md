@@ -34,7 +34,7 @@ $ pip install intersight-rest
 ### **Usage:**
 
 ```py
-# Import "intersight.rest" Package
+# Import "intersight_rest" Package
 import intersight_rest as isREST
 
 # Import JSON PAckage
