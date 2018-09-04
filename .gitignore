@@ -1,4 +1,4 @@
-# Dist Folder
+# Node Modules Folder
 node_modules/
 
 # PyCache Folder
@@ -10,7 +10,7 @@ build/
 # Python Dist Folder
 dist/
 
-# Pything Egg Folder
+# Python Egg Folder
 *.egg-info/
 
 # Keys Folder
