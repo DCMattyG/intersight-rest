@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="intersight-rest",
-    version="1.0.5",
+    version="1.0.6",
     author="Matthew Garrett",
     author_email="mgarrett0402@gmail.com",
     py_modules=['intersight_rest',],
@@ -22,7 +22,6 @@ setuptools.setup(
     ],
     classifiers=[
         "Programming Language :: Python :: 3",
-        "License :: OSI Approved :: MIT License",
         "Operating System :: OS Independent",
     ],
 )
