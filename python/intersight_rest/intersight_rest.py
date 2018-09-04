@@ -140,7 +140,7 @@ def get_gmt_date():
 
     return formatdate(timeval=None, localtime=False, usegmt=True)
 
-def intersight_call(resource_path="", query_params={}, body={}, moid=None):
+def intersight_call(http_method="", resource_path="", query_params={}, body={}, moid=None):
     """
     Invoke the Intersight API
 
@@ -154,7 +154,11 @@ def intersight_call(resource_path="", query_params={}, body={}, moid=None):
     target_host = urlparse(host).netloc
     target_path = urlparse(host).path
     query_path = ""
-    method = ""
+    method = http_method.upper()
+
+    # Verify an accepted HTTP verb was chosen
+    if(method not in ['GET','POST','PATCH','DELETE']):
+        return ('Please select a valid HTTP verb (GET/POST/PATCH/DELETE)')
 
     # Verify the resource path isn't empy & is a valid String
     if(resource_path != "" and type(resource_path) is not str):
@@ -180,19 +184,12 @@ def intersight_call(resource_path="", query_params={}, body={}, moid=None):
     if(private_key == None):
         return ('Private Key not set!')
 
-    # Determine HTTP Method for requests call
-    if(len(body) > 0):
-        if(moid != None):
-            method = 'PATCH'
-            resource_path += "/" + moid
-        else:
-            method = 'POST'
-    else:
-        method = 'GET'
+    # Set additional parameters based on HTTP Verb
+    if(query_params != {}):
+        query_path = "?" + urlencode(query_params, quote_via=quote)
 
-        if(query_params != {}):
-            # query_path = "?" + urlencode(query_params)
-            query_path = "?" + urlencode(query_params, quote_via=quote)
+    if (method != "POST" and moid is not None):
+        resource_path += "/" + moid
 
     # Concatenate URLs for headers
     target_url = host + resource_path
@@ -233,5 +230,7 @@ def intersight_call(resource_path="", query_params={}, body={}, moid=None):
         response = requests.post(target_url, headers=request_header, json=body)
     elif(method == "PATCH"):
         response = requests.patch(target_url, headers=request_header, json=body)
+    elif(method == "DELETE"):
+        response = requests.delete(target_url, headers=request_header, json=body)
 
-    return response.json()
+    return response
