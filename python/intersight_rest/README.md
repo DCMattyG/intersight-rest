@@ -28,14 +28,14 @@ Details on the RESTful API and documentation: https://intersight.com/apidocs
 ### **NPM Installation:**
 
 ```sh
-$ pip install intersight
+$ pip install intersight-rest
 ```
 
 ### **Usage:**
 
 ```py
 # Import "intersight.rest" Package
-import intersight.rest as isREST
+import intersight_rest as isREST
 
 # Import JSON PAckage
 import json
