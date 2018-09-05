@@ -9,10 +9,13 @@ intersight_call(**options);
 
 | Option | Format | Value |
 | ------ | ------ | ------ |
+| http_method | &lt;String&gt; | HTTP Verb [ GET \| POST \| PATCH \| DELETE ] |
 | resource_path | &lt;String&gt; | Resource Path from https://intersight.com/apidocs |
 | query_params | &lt;Dict&gt; | Query Parameters from Resource Path GET |
 | body | &lt;Dict&gt; | Body Parameters from Resource Path POST|
 | moid | &lt;String&gt; | MOID of Object to be Modified |
+
+&nbsp;
 
 More information about Intersight is available at: https://intersight.com  
 Details on the RESTful API and documentation: https://intersight.com/apidocs  
