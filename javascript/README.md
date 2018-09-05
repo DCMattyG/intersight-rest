@@ -9,8 +9,8 @@ intersightREST(<options>);
 
 | Option | Format | Value |
 | ------ | ------ | ------ |
-| resource_path | &lt;String&gt; | Resource Path from https://intersight.com/apidocs |
-| query_params | &lt;Object&gt; | Query Parameters from Resource Path GET |
+| resourcePath | &lt;String&gt; | Resource Path from https://intersight.com/apidocs |
+| queryParams | &lt;Object&gt; | Query Parameters from Resource Path GET |
 | body | &lt;Object&gt; | Body Parameters from Resource Path POST|
 | moid | &lt;String&gt; | MOID of Object to be Modified |
 
@@ -40,9 +40,9 @@ const resourcePath = '/ntp/Policies';
 // GET EXAMPLE
 /* Set GET Options */
 options = {
-    http_method: 'get',
-    resource_path: resourcePath,
-    query_params: queryParams
+    httpMethod: 'get',
+    resourcePath: resourcePath,
+    queryParams: queryParams
 };
 
 /* Send GET Request */
@@ -85,8 +85,8 @@ postBody = {
 
 /* Set POST Options */
 options = {
-    http_method: 'post',
-    resource_path: resourcePath,
+    httpMethod: 'post',
+    resourcePath: resourcePath,
     body: postBody
 };
 
@@ -110,8 +110,8 @@ patchBody = {
 
 /* Set PATCH Options */
 options = {
-    http_method: 'patch',
-    resource_path: resourcePath,
+    httpMethod: 'patch',
+    resourcePath: resourcePath,
     body: patchBody,
     moid: patchMoid
 };
@@ -130,8 +130,8 @@ deleteMoid = '6b1727fa686c873463b8163e';
 
 /* Set DELETE Options */
 options = {
-    http_method: 'delete',
-    resource_path: resourcePath,
+    httpMethod: 'delete',
+    resourcePath: resourcePath,
     moid: deleteMoid
 };
 
