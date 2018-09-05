@@ -131,6 +131,26 @@ def prepare_str_to_sign(req_tgt, hdrs):
 
     return ss
 
+def get_moid_by_name(resource_path, target_name):
+    """
+    Retrieve an Intersight object moid by name
+
+    :param resource_path: intersight resource path e.g. '/ntp/Policies'
+    :param target_name: intersight object name
+    :return: json http response object
+    """
+    query_params = {
+        "$filter": "Name eq '{0}'".format(target_name)
+    }
+
+    options = {
+        "http_method": "GET",
+        "resource_path": resource_path,
+        "query_params": query_params
+    }
+
+    return intersight_call(**options)
+
 def get_gmt_date():
     """
     Generated a GMT formatted Date
@@ -140,7 +160,7 @@ def get_gmt_date():
 
     return formatdate(timeval=None, localtime=False, usegmt=True)
 
-def intersight_call(http_method="", resource_path="", query_params={}, body={}, moid=None):
+def intersight_call(http_method="", resource_path="", query_params={}, body={}, moid=None, target_name=None):
     """
     Invoke the Intersight API
 
@@ -224,13 +244,15 @@ def intersight_call(http_method="", resource_path="", query_params={}, body={}, 
     }
 
     # Make HTTP request & return a Javascript Promise
-    if(method == "GET"):
-        response = requests.get(target_url, headers=request_header, json=body, params=urlencode(query_params, quote_via=quote))
-    elif(method == "POST"):
-        response = requests.post(target_url, headers=request_header, json=body)
-    elif(method == "PATCH"):
-        response = requests.patch(target_url, headers=request_header, json=body)
-    elif(method == "DELETE"):
-        response = requests.delete(target_url, headers=request_header, json=body)
+    http_request = requests.Request(
+        method = method,
+        url = target_url,
+        headers = request_header,
+        json = body,
+        params = urlencode(query_params, quote_via=quote)
+    )
+    prepared_request = http_request.prepare()
+    http_session = requests.Session()
+    response = http_session.send(prepared_request)
 
     return response
