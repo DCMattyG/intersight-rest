@@ -144,8 +144,8 @@ function get_gmt_date() {
  * @return {Object}               Javascript Object from JSON response.
  */
 function make_request(request_data) {
-    return request(request_data).then(body => {
-        return JSON.parse(body);
+    return request(request_data).then(response => {
+        return response.toJSON();
     });
 }
 
@@ -159,11 +159,16 @@ function make_request(request_data) {
  * @param  {String} moid           Intersight object MOID.
  * @return {Promise}               Javascript Promise for HTTP response body.
  */
-const intersightREST = function intersight_call({resource_path="", query_params={}, body={}, moid=null} = {}) {
+const intersightREST = function intersight_call({http_method="", resource_path="", query_params={}, body={}, moid=null} = {}) {
     var target_host = host.hostname;
     var target_path = host.pathname;
     var query_path = "";
-    var method;
+    var method = http_method.toUpperCase();
+
+    // Verify an accepted HTTP verb was chosen
+    if(!['GET','POST','PATCH','DELETE'].includes(method)) {
+        return Promise.reject('Please select a valid HTTP verb (GET/POST/PATCH/DELETE)');
+    }
 
     // Verify the resource path isn't empy & is a valid String
     if(resource_path != "" && resource_path.constructor != String) {
@@ -195,22 +200,13 @@ const intersightREST = function intersight_call({resource_path="", query_params=
         return Promise.reject('Private Key not set!');
     }
 
-    // Determine HTTP Method for requests call
-    if(Object.keys(body).length > 0){
-        if(moid != null) {
-            method = 'PATCH';
-            resource_path += "/" + moid;
-        }
-        else {
-            method = 'POST';
-        }
+    // Set additional parameters based on HTTP Verb
+    if(Object.keys(query_params).length != 0) {
+        query_path = "?" + qs.stringify(query_params);
     }
-    else {
-        method = 'GET';
 
-        if(Object.keys(query_params).length != 0) {
-            query_path = "?" + qs.stringify(query_params);
-        }
+    if (method != "POST" && moid != null) {
+        resource_path += "/" + moid;
     }
 
     // Concatenate URLs for headers
@@ -249,7 +245,8 @@ const intersightREST = function intersight_call({resource_path="", query_params=
         url: target_url,
         qs: query_params,
         body: JSON.stringify(body),
-        headers: request_header
+        headers: request_header,
+        resolveWithFullResponse: true
     };
 
     // Make HTTP request & return a Javascript Promise

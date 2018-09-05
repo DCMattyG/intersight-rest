@@ -14,14 +14,6 @@ intersightREST(<options>);
 | body | &lt;Object&gt; | Body Parameters from Resource Path POST|
 | moid | &lt;String&gt; | MOID of Object to be Modified |
 
-&nbsp;  
-
-The HTTP verbs will be assumed as follows:
- - GET: &lt;resource_path&gt;
- - GET: &lt;resource_path&gt; + &lt;query_params&gt;
- - POST: &lt;resource_path&gt; + &lt;body&gt;
- - PATCH: &lt;resource_path&gt; + &lt;body&gt; + &lt;moid&gt;
-
 More information about Intersight is available at: https://intersight.com  
 Details on the RESTful API and documentation: https://intersight.com/apidocs  
 
@@ -48,12 +40,14 @@ const resourcePath = '/ntp/Policies';
 // GET EXAMPLE
 /* Set GET Options */
 options = {
+    http_method: 'get',
     resource_path: resourcePath,
     query_params: queryParams
 };
 
-isREST.intersightREST(options).then(body => {
-    console.log(body);
+/* Send GET Request */
+isREST.intersightREST(options).then(response => {
+    console.log(response.body);
 }).catch(err => {
     console.log('Error: ', err);
 });
@@ -91,12 +85,14 @@ postBody = {
 
 /* Set POST Options */
 options = {
+    http_method: 'post',
     resource_path: resourcePath,
     body: postBody
 };
 
-isREST.intersightREST(options).then(body => {
-    console.log(body);
+/* Send POST Request */
+isREST.intersightREST(options).then(response => {
+    console.log(response.body);
 }).catch(err => {
     console.log('Error: ', err);
 });
@@ -114,13 +110,34 @@ patchBody = {
 
 /* Set PATCH Options */
 options = {
+    http_method: 'patch',
     resource_path: resourcePath,
     body: patchBody,
     moid: patchMoid
 };
 
-isREST.intersightREST(options).then(body => {
-    console.log(body);
+/* Send PATCH Request */
+isREST.intersightREST(options).then(response => {
+    console.log(response.body);
+}).catch(err => {
+    console.log('Error: ', err);
+
+/* NOTE: intersightREST Returns a JS Promise */
+
+// DELETE EXAMPLE
+/* Set Object MOID to be Deleted */
+deleteMoid = '6b1727fa686c873463b8163e';
+
+/* Set DELETE Options */
+options = {
+    http_method: 'delete',
+    resource_path: resourcePath,
+    moid: deleteMoid
+};
+
+/* Send DELETE Request */
+isREST.intersightREST(options).then(response => {
+    console.log(response.statusCode);
 }).catch(err => {
     console.log('Error: ', err);
 
