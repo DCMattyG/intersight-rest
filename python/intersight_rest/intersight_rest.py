@@ -1,7 +1,7 @@
 """
 Intersight REST API Module
 Author: Matthew Garrett
-Contributors: David Soper, Chris Gascoigne
+Contributors: David Soper, Chris Gascoigne, John McDonough
 Email: mgarrett0402@gmail.com
 
 Copyright (c) 2018 Cisco and/or its affiliates.
@@ -82,9 +82,6 @@ def get_rsasig_b64encode(digest):
     signer = PKCS1_v1_5.new(rsakey)
     sign = signer.sign(digest)
 
-    # print("SIGN BEFORE B64 ENCODE:")
-    # print(sign)
-
     return b64encode(sign)
 
 def get_auth_header(hdrs, signed_msg):
@@ -149,7 +146,14 @@ def get_moid_by_name(resource_path, target_name):
         "query_params": query_params
     }
 
-    return intersight_call(**options)
+    get_moid = intersight_call(**options)
+
+    if(get_moid.json()['Results'] != None):
+        located_moid = get_moid.json()['Results'][0]['Moid']
+    else:
+        raise KeyError('Object with name "{0}" not found!'.format(target_name))
+
+    return located_moid
 
 def get_gmt_date():
     """
@@ -160,7 +164,7 @@ def get_gmt_date():
 
     return formatdate(timeval=None, localtime=False, usegmt=True)
 
-def intersight_call(http_method="", resource_path="", query_params={}, body={}, moid=None, target_name=None):
+def intersight_call(http_method="", resource_path="", query_params={}, body={}, moid=None, name=None):
     """
     Invoke the Intersight API
 
@@ -168,6 +172,7 @@ def intersight_call(http_method="", resource_path="", query_params={}, body={}, 
     :param query_params: dictionary object with query string parameters as key/value pairs
     :param body: dictionary object with intersight data
     :param moid: intersight object moid
+    :param name: intersight object name
     :return: json http response object
     """
 
@@ -178,37 +183,47 @@ def intersight_call(http_method="", resource_path="", query_params={}, body={}, 
 
     # Verify an accepted HTTP verb was chosen
     if(method not in ['GET','POST','PATCH','DELETE']):
-        return ('Please select a valid HTTP verb (GET/POST/PATCH/DELETE)')
+        raise ValueError('Please select a valid HTTP verb (GET/POST/PATCH/DELETE)')
 
     # Verify the resource path isn't empy & is a valid String
     if(resource_path != "" and type(resource_path) is not str):
-        return ('The *resource_path* value is required and must be of type "String"')
+        raise TypeError('The *resource_path* value is required and must be of type "String"')
 
     # Verify the query parameters isn't empy & is a valid Javascript Object
     if(query_params != {} and type(query_params) is not dict):
-        return ('The *query_params* value must be of type "Object"')
+        raise TypeError('The *query_params* value must be of type "Object"')
 
     # Verify the body isn't empy & is a valid Javascript Object
     if(body != {} and type(body) is not dict):
-        return ('The *body* value must be of type "Object"')
+        raise TypeError('The *body* value must be of type "Object"')
 
     # Verify the MOID is not null & of proper length
     if(moid != None and len(moid.encode('utf-8')) != 24):
-        return ('Invalid *moid* value!')
+        raise ValueError('Invalid *moid* value!')
 
     # Verify the public key is set
     if(public_key == None):
-        return ('Public Key not set!')
+        raise ValueError('Public Key not set!')
 
     # Verify the private key is set
     if(private_key == None):
-        return ('Private Key not set!')
+        raise ValueError('Private Key not set!')
 
     # Set additional parameters based on HTTP Verb
     if(query_params != {}):
         query_path = "?" + urlencode(query_params, quote_via=quote)
 
-    if (method != "POST" and moid is not None):
+    if(method == "PATCH" or method == "DELETE"):
+        if(moid == None):
+            if(name != None):
+                if(type(name) is str):
+                    moid = get_moid_by_name(resource_path, name)
+                else:
+                    raise TypeError('The *name* value must be of type "String"')
+            else:
+                raise ValueError('Must set either *moid* or *name* with "PATCH/DELETE!"')
+
+    if(method != "POST" and moid != None):
         resource_path += "/" + moid
 
     # Concatenate URLs for headers
@@ -243,7 +258,7 @@ def intersight_call(http_method="", resource_path="", query_params={}, body={}, 
         'Authorization':    '{0}'.format(auth_header),
     }
 
-    # Make HTTP request & return a Javascript Promise
+    # Format HTTP request
     http_request = requests.Request(
         method = method,
         url = target_url,
@@ -251,8 +266,11 @@ def intersight_call(http_method="", resource_path="", query_params={}, body={}, 
         json = body,
         params = urlencode(query_params, quote_via=quote)
     )
+
+    # Prepare & send HTTP request
     prepared_request = http_request.prepare()
     http_session = requests.Session()
     response = http_session.send(prepared_request)
 
+    # Return a Javascript Promise
     return response

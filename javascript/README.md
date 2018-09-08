@@ -14,8 +14,10 @@ intersightREST(<options>);
 | queryParams | &lt;Object&gt; | Query Parameters from Resource Path GET |
 | body | &lt;Object&gt; | Body Parameters from Resource Path POST|
 | moid | &lt;String&gt; | MOID of Object to be Modified |
+| name | &lt;String&gt; | Name of Object to be Modified (See Notes) |
 
-&nbsp;
+<sup>1</sup> ***name*** will be ignored if ***moid*** is set.  
+<sup>2</sup> ***name*** is case sensitive.  
 
 More information about Intersight is available at: https://intersight.com  
 Details on the RESTful API and documentation: https://intersight.com/apidocs  

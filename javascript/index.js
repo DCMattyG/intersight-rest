@@ -2,7 +2,7 @@
  * Intersight REST API Module
  * @module intersight-rest
  * Author: Matthew Garrett
- * Contributors: David Soper, Chris Gascoigne
+ * Contributors: David Soper, Chris Gascoigne, John McDonough
  * Email: mgarrett0402@gmail.com
  * 
  * Copyright (c) 2018 Cisco and/or its affiliates.
@@ -55,8 +55,8 @@ const setPrivateKey = function set_privateKey(prvKey) {
  * Generates a SHA256 digest from a JSON Object.
  * @function getSHA256Digest
  * @private
- * @param  {Object} data  JSON object.
- * @return {string}       Base64 formatted string.
+ * @param  {Object} data    JSON object.
+ * @return {string}         Base64 formatted string.
  */
 function getSHA256Digest(data) {
     return digest = crypto.createHash('sha256').update(JSON.stringify(data), 'utf8').digest();
@@ -66,8 +66,8 @@ function getSHA256Digest(data) {
  * Generates an RSA Signed SHA256 digest from a String.
  * @function getRSASigSHA256b64Encode
  * @private
- * @param  {String} data         String to be signed & hashed.
- * @return {string}              Base64 formatted string.
+ * @param  {String} data    String to be signed & hashed.
+ * @return {string}         Base64 formatted string.
  */
 function getRSASigSHA256b64Encode(data) {
     var keyData = {
@@ -83,7 +83,7 @@ function getRSASigSHA256b64Encode(data) {
  * @function getAuthHeader
  * @private
  * @param  {Object} hdrs        Object with header keys.
- * @param  {String} signedMsg  Base64 encoded SHA256 hashed body.
+ * @param  {String} signedMsg   Base64 encoded SHA256 hashed body.
  * @return {string}             Concatenated authorization header.
  */
 function getAuthHeader(hdrs, signedMsg) {
@@ -105,9 +105,9 @@ function getAuthHeader(hdrs, signedMsg) {
  * Concatenates Intersight headers in preparation to be RSA signed.
  * @function prepStringToSign
  * @private
- * @param  {String} reqTarget  HTTP Method + endpoint.
- * @param  {Object} hdrs     Object with header keys.
- * @return {string}          Concatenated header authorization string.
+ * @param  {String} reqTarget   HTTP Method + endpoint.
+ * @param  {Object} hdrs        Object with header keys.
+ * @return {string}             Concatenated header authorization string.
  */
 function prepStringToSign(reqTarget, hdrs) {
     var ss = "(request-target): " + reqTarget.toLowerCase() + "\n";
@@ -140,8 +140,8 @@ function getGMTDate() {
  * Callback for sending HTTP requests.
  * @function makeRequest
  * @private
- * @param  {Object} requestData  Requests formatted object.
- * @return {Object}               Javascript Object from JSON response.
+ * @param  {Object} requestData     Requests formatted object.
+ * @return {Object}                 Javascript Object from JSON response.
  */
 function makeRequest(requestData) {
     return request(requestData).then(response => {
@@ -150,16 +150,48 @@ function makeRequest(requestData) {
 }
 
 /**
+ * Retrieve an Intersight object moid by name.
+ * @function getMoidByName
+ * @private
+ * @param  {String} resourcePath    Intersight resource path e.g. '/ntp/Policies'.
+ * @param  {String} targetName      Name of target Intersight Object.
+ * @return {Object}                 MOID for target Intersight Object.
+ */
+async function getMoidByName(resourcePath, targetName) {
+    var locatedMoid = "";
+
+    var queryParams = {
+        "$filter": `Name eq '${targetName}'`
+    };
+
+    var options = {
+        "httpMethod": "GET",
+        "resourcePath": resourcePath,
+        "queryParams": queryParams
+    };
+
+    var response = await intersightREST(options);
+
+    if(JSON.parse(response.body).Results != null) {
+        locatedMoid = JSON.parse(response.body).Results[0].Moid;
+    } else {
+        return Promise.reject(`Object with name "${targetName}" not found!`);
+    }
+
+    return locatedMoid;
+}
+
+/**
  * Invoke the Intersight API.
  * @function intersight_call
  * @public
- * @param  {String} resourcePath  Intersight resource path e.g. '/ntp/Policies'.
- * @param  {Object} queryParams   Javascript object with query string parameters as key/value pairs.
- * @param  {Object} body           Javascript object with Intersight data.
- * @param  {String} moid           Intersight object MOID.
- * @return {Promise}               Javascript Promise for HTTP response body.
+ * @param  {String} resourcePath    Intersight resource path e.g. '/ntp/Policies'.
+ * @param  {Object} queryParams     Javascript object with query string parameters as key/value pairs.
+ * @param  {Object} body            Javascript object with Intersight data.
+ * @param  {String} moid            Intersight object MOID.
+ * @return {Promise}                Javascript Promise for HTTP response body.
  */
-const intersightREST = function intersight_call({httpMethod="", resourcePath="", queryParams={}, body={}, moid=null} = {}) {
+const intersightREST = async function intersight_call({httpMethod="", resourcePath="", queryParams={}, body={}, moid=null, name=null} = {}) {
     var targetHost = host.hostname;
     var targetPath = host.pathname;
     var queryPath = "";
@@ -203,6 +235,22 @@ const intersightREST = function intersight_call({httpMethod="", resourcePath="",
     // Set additional parameters based on HTTP Verb
     if(Object.keys(queryParams).length != 0) {
         queryPath = "?" + qs.stringify(queryParams);
+    }
+
+    if(method == "PATCH" || method == "DELETE") {
+        if(moid == null) {
+            if(name != null) {
+                if(name.constructor == String) {
+                    moid = await getMoidByName(resourcePath, name);
+                }
+                else {
+                    return Promise.reject('The *moid_from_name* value must be of type "String"');
+                }
+            }
+            else {
+                return Promise.reject('Must set either *moid* or *moid_from_name* with "PATCH/DELETE!"');
+            }
+        }
     }
 
     if (method != "POST" && moid != null) {
@@ -257,5 +305,5 @@ const intersightREST = function intersight_call({httpMethod="", resourcePath="",
 module.exports = {
     intersightREST,
     setPublicKey,
-    setPrivateKey
+    setPrivateKey,
 };
