@@ -105,13 +105,15 @@ isREST.intersightREST(options).then(response => {
 /* NOTE: intersightREST Returns a JS Promise */
 
 // PATCH EXAMPLE
-/* Set Object MOID to be Modified */
-patchMoid = '6b1727fa686c873463b8163e';
-
 /* Assemble PATCH Body */
 patchBody = {
     NtpServers: ["10.10.10.10"]
 };
+
+/* Option #1: PATCH by Object MOID */
+
+/* Set Object MOID to be Modified */
+patchMoid = '6b1727fa686c873463b8163e';
 
 /* Set PATCH Options */
 options = {
@@ -119,6 +121,19 @@ options = {
     resourcePath: resourcePath,
     body: patchBody,
     moid: patchMoid
+};
+
+/* Option #2: PATCH by Object NAME */
+
+/* Set Object NAME to be Modified */
+patchName = 'Test-NTP';
+
+/* Set PATCH Options */
+options = {
+    httpMethod: 'patch',
+    resourcePath: resourcePath,
+    body: patchBody,
+    name: patchName
 };
 
 /* Send PATCH Request */
@@ -130,6 +145,8 @@ isREST.intersightREST(options).then(response => {
 /* NOTE: intersightREST Returns a JS Promise */
 
 // DELETE EXAMPLE
+/* Option #1: DELETE by Object MOID */
+
 /* Set Object MOID to be Deleted */
 deleteMoid = '6b1727fa686c873463b8163e';
 
@@ -138,6 +155,18 @@ options = {
     httpMethod: 'delete',
     resourcePath: resourcePath,
     moid: deleteMoid
+};
+
+/* Option #2: DELETE by Object NAME */
+
+/* Set Object NAME to be Deleted */
+deleteName = 'Test-NTP';
+
+/* Set DELETE Options */
+options = {
+    httpMethod: 'delete',
+    resourcePath: resourcePath,
+    name: deleteName
 };
 
 /* Send DELETE Request */

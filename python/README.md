@@ -103,13 +103,15 @@ print(json.dumps(results.json(), indent=4))
 #-- NOTE: intersight_call Returns a "requests.Response" Type --#
 
 # PATCH EXAMPLE
-#-- Set Object MOID to be Modified --#
-patch_moid = "6b1727fa686c873463b8163e"
-
 #-- Assemble PATCH Body --#
 patch_body = {
     "NtpServers": ["10.10.10.10"]
 }
+
+#-- Option #1: PATCH by Object MOID --#
+
+#-- Set Object MOID to be Modified --#
+patch_moid = "6b1727fa686c873463b8163e"
 
 #-- Set PATCH Options --#
 options = {
@@ -117,6 +119,19 @@ options = {
     "resource_path": resource_path,
     "body": patch_body,
     "moid": patch_moid
+}
+
+#-- Option #2: PATCH by Object NAME --#
+
+#-- Set Object NAME to be Modified --#
+patch_name = "Test-NTP"
+
+#-- Set PATCH Options --#
+options = {
+    "http_method": "patch",
+    "resource_path": resource_path,
+    "body": patch_body,
+    "name": patch_name
 }
 
 #-- Send PATCH Request --#
@@ -127,13 +142,26 @@ print(json.dumps(results.json(), indent=4))
 #-- NOTE: intersight_call Returns a "requests.Response" Type --#
 
 # DELETE EXAMPLE
-#-- Set Object MOID to be Modified --#
+#-- Option #1: DELETE by Object MOID --#
+
+#-- Set Object MOID to be Deleted --#
 delete_moid = "6b1727fa686c873463b8163e"
 
 #-- Set DELETE Options --#
 options = {
     "http_method": "delete",
     "moid": delete_moid
+}
+
+#-- Option #2: DELETE by Object Name --#
+
+#-- Set Object NAME to be Deleted --#
+delete_name = "Test-NTP"
+
+#-- Set DELETE Options --#
+options = {
+    "http_method": "delete",
+    "name": delete_name
 }
 
 #-- Send DELETE Request --#

@@ -209,10 +209,11 @@ def intersight_call(http_method="", resource_path="", query_params={}, body={}, 
     if(private_key == None):
         raise ValueError('Private Key not set!')
 
-    # Set additional parameters based on HTTP Verb
+    # Check for query_params, encode, and concatenate onto URL
     if(query_params != {}):
         query_path = "?" + urlencode(query_params, quote_via=quote)
 
+    # Handle PATCH/DELETE by Object "name" instead of "moid"
     if(method == "PATCH" or method == "DELETE"):
         if(moid == None):
             if(name != None):
@@ -223,6 +224,7 @@ def intersight_call(http_method="", resource_path="", query_params={}, body={}, 
             else:
                 raise ValueError('Must set either *moid* or *name* with "PATCH/DELETE!"')
 
+    # Check for moid and concatenate onto URL
     if(method != "POST" and moid != None):
         resource_path += "/" + moid
 
@@ -272,5 +274,5 @@ def intersight_call(http_method="", resource_path="", query_params={}, body={}, 
     http_session = requests.Session()
     response = http_session.send(prepared_request)
 
-    # Return a Javascript Promise
+    # Return requests.Response
     return response
